@@ -8,7 +8,7 @@ not the shop's official site.
 
 ## Why a new site?
 
-Chosen Cuts has a perfect 5.0 rating and 90+ reviews, but **no real website** — customers
+Chosen Cuts has a perfect 5.0, 5-star rating on Booksy, but **no real website** — customers
 can only find them through Booksy, Fresha, and Facebook. That means:
 
 - No home base that shows up cleanly in a Google search for their name.
