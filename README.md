@@ -50,7 +50,7 @@ priceRange, image, url, `sameAs` → Booksy + Facebook), canonical + Open Graph 
 tags, a single `<h1>`, plus `robots.txt` and `sitemap.xml` at the repo root.
 
 Because the final domain isn't known yet, every absolute URL uses the literal placeholder
-`https://REPLACE-WITH-DOMAIN.com/`. **At deploy, do one find-replace** of that string with
+`https://chosencuts.com/`. **At deploy, do one find-replace** of that string with
 the real domain across `index.html`, `sitemap.xml`, and `robots.txt`.
 
 ## Tech
