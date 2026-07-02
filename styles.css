@@ -232,25 +232,6 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 @keyframes scrollDot { 0% { opacity: 0; transform: translateY(0); } 40% { opacity: 1; } 80% { opacity: 0; transform: translateY(12px); } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .scroll-cue span { animation: none; } }
 
-/* ---------- Marquee strip ---------- */
-.strip {
-  background: var(--brass);
-  color: #1b160d;
-  overflow: hidden;
-  padding-block: 0.7rem;
-  border-block: 1px solid var(--brass-lo);
-}
-.strip-track {
-  display: flex; align-items: center; gap: 2.2rem;
-  width: max-content;
-  animation: marquee 26s linear infinite;
-  font-family: var(--font-display);
-  font-size: 1.35rem; letter-spacing: 0.08em; text-transform: uppercase;
-}
-.strip .dot { font-size: 0.9rem; opacity: 0.7; }
-@keyframes marquee { to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) { .strip-track { animation: none; } }
-
 /* ---------- Services ---------- */
 .services { padding-block: clamp(4rem, 9vw, 7rem); background: var(--ink); }
 .menu-grid {
