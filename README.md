@@ -43,6 +43,16 @@ and center.
 
 Open `index.html` in any browser. No server or install required.
 
+## SEO / deploy note
+
+On-page SEO is wired in: a `BarberShop` JSON-LD block (name, phone, address, hours,
+priceRange, image, url, `sameAs` → Booksy + Facebook), canonical + Open Graph + Twitter
+tags, a single `<h1>`, plus `robots.txt` and `sitemap.xml` at the repo root.
+
+Because the final domain isn't known yet, every absolute URL uses the literal placeholder
+`https://REPLACE-WITH-DOMAIN.com/`. **At deploy, do one find-replace** of that string with
+the real domain across `index.html`, `sitemap.xml`, and `robots.txt`.
+
 ## Tech
 
 Plain HTML + CSS + a small vanilla-JS file. Google Fonts + GLightbox loaded via `<link>`/CDN.
