@@ -31,6 +31,8 @@
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
+html, body { overflow-x: clip; max-width: 100%; }
+
 body {
   margin: 0;
   font-family: var(--font-body);
@@ -38,7 +40,7 @@ body {
   background: var(--ink);
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 img { max-width: 100%; display: block; }
@@ -103,8 +105,10 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 /* ---------- Header ---------- */
 .site-header {
   position: fixed; inset: 0 0 auto 0; z-index: 100;
-  transition: background 0.4s var(--ease), backdrop-filter 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  transition: background 0.4s var(--ease), backdrop-filter 0.4s var(--ease), box-shadow 0.4s var(--ease), transform 0.35s var(--ease);
 }
+/* Hide on scroll-down; JS removes this instantly on any upward scroll */
+.site-header.nav-hidden { transform: translateY(-100%); }
 .site-header.scrolled {
   background: rgba(19,16,12,0.82);
   backdrop-filter: blur(14px) saturate(120%);
@@ -144,22 +148,53 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 .menu-toggle {
   display: none; flex-direction: column; gap: 5px;
   background: none; border: 0; cursor: pointer; padding: 6px;
+  position: relative; z-index: 120;
+  -webkit-tap-highlight-color: transparent; user-select: none;
 }
 .menu-toggle span { width: 24px; height: 2px; background: var(--bone); border-radius: 2px; transition: transform 0.3s var(--ease), opacity 0.3s var(--ease); }
 .menu-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-.mobile-menu[hidden] { display: none; }
-.mobile-menu {
-  display: flex; flex-direction: column; gap: 0.4rem;
-  padding: 1rem var(--pad) 1.6rem;
-  background: rgba(19,16,12,0.97);
-  backdrop-filter: blur(14px);
-  border-top: 1px solid var(--line);
+/* Scrim behind the dropdown — tap to close */
+.nav-scrim {
+  position: fixed; inset: 0; z-index: 90;
+  background: rgba(10, 8, 5, 0.5);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s var(--ease);
+  -webkit-tap-highlight-color: transparent; user-select: none;
 }
-.mobile-menu a { padding: 0.7rem 0; color: var(--bone); font-weight: 500; font-size: 1.05rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.mobile-menu .btn { margin-top: 0.8rem; justify-content: center; }
+.nav-scrim.open { opacity: 1; pointer-events: auto; }
+
+/* Animated downward dropdown menu — relocated to <body>, fixed below header */
+.mobile-menu {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 95;
+  display: flex; flex-direction: column; gap: 0.2rem;
+  padding: 4.6rem var(--pad) 1.4rem;
+  background: #17140f;
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 18px 40px -18px rgba(0,0,0,0.85);
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.42s var(--ease), opacity 0.3s var(--ease);
+  -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.mobile-menu.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-menu a {
+  padding: 0.9rem 1rem 0.9rem 0.2rem;
+  color: var(--bone); font-weight: 500; font-size: 1.05rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.mobile-menu a:last-of-type { border-bottom: 0; }
+.mobile-menu .btn { margin-top: 0.9rem; justify-content: center; }
+
+/* Prevent background scroll while the menu is open */
+body.nav-open { overflow: hidden; }
 
 /* ---------- Hero ---------- */
 .hero {
