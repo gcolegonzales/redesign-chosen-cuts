@@ -21,13 +21,59 @@
   /* Mobile menu */
   var menuOpen = false;
   if (toggle && mobileMenu) {
+    var mainEl = document.getElementById("main");
+    var footerEl = document.querySelector(".site-footer");
+
+    var getMenuFocusables = function () {
+      return Array.prototype.slice.call(
+        mobileMenu.querySelectorAll('a[href], button:not([disabled])')
+      );
+    };
+
+    /* Remove off-canvas links from the tab order while the drawer is closed. */
+    var setMenuTabbable = function (tabbable) {
+      getMenuFocusables().forEach(function (el) {
+        if (tabbable) el.removeAttribute("tabindex");
+        else el.setAttribute("tabindex", "-1");
+      });
+    };
+
+    var setInert = function (on) {
+      [mainEl, footerEl].forEach(function (el) {
+        if (!el) return;
+        if (on) {
+          el.setAttribute("aria-hidden", "true");
+          try { el.inert = true; } catch (e) {}
+        } else {
+          el.removeAttribute("aria-hidden");
+          try { el.inert = false; } catch (e) {}
+        }
+      });
+    };
+
     var setMenu = function (open) {
       menuOpen = open;
       toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
       mobileMenu.classList.toggle("open", open);
       scrim.classList.toggle("open", open);
       document.body.classList.toggle("nav-open", open);
+      mobileMenu.setAttribute("aria-hidden", String(!open));
+      setMenuTabbable(open);
+      setInert(open);
+
+      if (open) {
+        var f = getMenuFocusables();
+        if (f.length) f[0].focus();
+      } else {
+        toggle.focus();
+      }
     };
+
+    /* Start closed: links out of the tab order, drawer hidden from AT. */
+    mobileMenu.setAttribute("aria-hidden", "true");
+    setMenuTabbable(false);
+
     toggle.addEventListener("click", function () {
       setMenu(toggle.getAttribute("aria-expanded") !== "true");
     });
@@ -36,8 +82,29 @@
       a.addEventListener("click", function () { setMenu(false); });
     });
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && menuOpen) setMenu(false);
+      if (!menuOpen) return;
+      if (e.key === "Escape") { setMenu(false); return; }
+      if (e.key === "Tab") {
+        var f = getMenuFocusables();
+        if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus();
+        } else if (!mobileMenu.contains(document.activeElement)) {
+          e.preventDefault(); first.focus();
+        }
+      }
     });
+
+    /* Reset drawer + toggle state when crossing the desktop breakpoint. */
+    var desktopMq = window.matchMedia("(min-width: 721px)");
+    var onBreakpoint = function () {
+      if (desktopMq.matches && menuOpen) setMenu(false);
+    };
+    if (desktopMq.addEventListener) desktopMq.addEventListener("change", onBreakpoint);
+    else if (desktopMq.addListener) desktopMq.addListener(onBreakpoint);
   }
 
   /* Sticky / shrinking header + reveal on ANY upward scroll */
